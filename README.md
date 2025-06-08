@@ -90,11 +90,11 @@
 
 ## Setup Instructions
 
-### 1. Clone the Repository
+### 1. Clone the Repository to any place your disk.
 
 ```sh
-git clone https://github.com/yourusername/talk-chat-editor.git
-cd talk-chat-editor
+git clone https://github.com/ialhabbal/Talk.git
+cd Talk
 ```
 
 ### 2. Install Dependencies
@@ -117,8 +117,11 @@ npm run dev
 - By default, the app expects the backend at `http://localhost:3000/generate`.
 - You can change this URL in the `backendUrl` variable in [src/App.vue](src/App.vue).
 - I tested with Koboldcpp on it's port 5001.
+
 ---
-Run Talk.bat
+
+In the project folder, run "Talk.bat"
+
 ---
 
 ## Usage Guide
