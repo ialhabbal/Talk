@@ -1,0 +1,22 @@
+{
+  "name": "story-talk",
+  "version": "1.0.0",
+  "description": "A Vue 3 chat/story app with LLM preset management and rich import/export features.",
+  "author": "ialhabbal",
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.4.0",
+    "vue3-colorpicker": "^2.0.0",
+    "mammoth": "^1.0.0",
+    "docx": "^8.0.0"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0",
+    "@vitejs/plugin-vue": "^5.0.0"
+  }
+}
