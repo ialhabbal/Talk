@@ -117,7 +117,8 @@ npm run dev
 - By default, the app expects the backend at `http://localhost:3000/generate`.
 - You can change this URL in the `backendUrl` variable in [src/App.vue](src/App.vue).
 - I tested with Koboldcpp on it's port 5001.
-
+---
+Run Talk.bat
 ---
 
 ## Usage Guide
