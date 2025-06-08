@@ -191,7 +191,7 @@ MIT License
 ## Credits
 
 - Built with [Vue 3](https://vuejs.org/), [vue3-colorpicker](https://github.com/caohenghu/vue3-colorpicker), [mammoth.js](https://github.com/mwilliamson/mammoth.js), and [docx](https://github.com/dolanmiu/docx).
-- Developed by [Your Name or Organization].
+- Developed by [ialhabbal].
 
 ---
 
