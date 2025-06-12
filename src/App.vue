@@ -15,21 +15,37 @@
             <hr class="sidebar-separator" />
             <div class="section">
               <p style="margin-bottom: 8px; font-weight: 500; line-height: 1.2;">
-                Add User, Character(s) and Start Chatting, or Load an Existing Chat File<br>
-                <span style="font-weight: 400; font-size: 0.97em; color: #b0b7c3;">(.txt / .docx / .json)</span>
+                Load an Existing Chat File, or,
+                <span style="display: block; text-align: center;">
+                  <br />
+                  Add New User and Character(s) and Start Chatting
+                </span>
+                <br>
+                  (P.S: Add only one user so you don't confuse the LLM)
+                <br />
+                <span style="font-weight: 400; font-size: 0.97em; color: #b0b7c3;"</span>
               </p>
             </div>
             <!-- Removed bordered-section that contained Start New Chat button -->
             <div class="section bordered-section">
-              <label>Load Existing Chat File:</label>
-              <input type="file" accept=".json,.txt,.docx" @change="onFileUpload" />
+              <label>
+                Load Existing Chat File
+                <span style="font-weight: 400; font-size: 0.97em; color: #b0b7c3; margin-left: 6px;">
+                  (.txt / .docx / .json)
+                </span>:
+              </label>
+              <br />
+              <br />
+              <input type="file" accept=".json,.txt,.docx" @change="onFileUpload" style="margin-top: 8px;" />
             </div>
             <!-- Move Chat Title section here -->
             <div class="section">
               <label>Chat Title<br> (Auto Generated or Write Own Title)</label>
               <input v-model="state.chatTitle" class="input" placeholder="Chat Title" />
-              <button class="export-btn" style="margin-top:8px;" @click="addNewCharacter">Add New Character</button>
+              <br />
+              <br />
               <button class="export-btn" style="margin-top:8px;" @click="addNewUser">Add New User</button>
+              <button class="export-btn" style="margin-top:8px;" @click="addNewCharacter">Add New Character(s)</button>
             </div>
             <!-- Characters sections below -->
             <div class="section" v-if="state.potentialCharacters.length">
@@ -43,7 +59,9 @@
               <button @click="applyCharacterSelection">Add Characters to Chat</button>
             </div>
             <div class="section" v-if="state.characters.length">
-              <label>Characters:</label>
+              <label>Current User/Character(s):</label>
+              <br />
+              <br />
               <div class="character-edit" v-for="(c, idx) in state.characters" :key="c.name">
                 <span class="type-label" style="font-weight:bold; margin-right:4px;">{{ c.typeLabel }}</span>
                 <input v-model="c.name" class="input charname" @input="onCharacterNameEdit(idx)" />
@@ -113,6 +131,8 @@
             <hr class="sidebar-separator" />
             <div class="section">
               <label>Layout:</label>
+              <br />
+              <br />
               <div class="slider-row">
                 <span>Message Box Width:</span>
                 <input type="range" min="400" max="1200" v-model="state.layout.messageWidth" @input="onLayoutChange" />
@@ -155,6 +175,8 @@
             <hr class="sidebar-separator" />
             <div class="section">
               <label>Colors:</label>
+              <br />
+              <br />
               <div class="color-row">
                 <span>Text:</span>
                 <ColorPicker v-model:pureColor="state.colors.text" />
@@ -511,7 +533,7 @@
                 class="msg-content"
                 v-html="formatText(msg.versions && msg.versions[msg.currentVersionIdx] ? msg.versions[msg.currentVersionIdx].content : msg.content, msg.speaker)"
                 :dir="msg.direction || 'ltr'"
-                :style="{ textAlign: (msg.direction === 'rtl') ? 'right' : 'left' }"
+                :style="Object.assign({}, { textAlign: (msg.direction === 'rtl') ? 'right' : 'left' }, characterMessageStyle(msg.speaker))"
                 @click="startEdit(idx, msg.content)"
               >
               </div>
@@ -519,11 +541,7 @@
                 v-else
                 v-model="editContent"
                 class="msg-edit"
-                :style="{
-                  fontSize: state.layout.fontSize + 'px',
-                  color: state.colors.text,
-                  textAlign: editDirection === 'rtl' ? 'right' : 'left'
-                }"
+                :style="Object.assign({}, { fontSize: state.layout.fontSize + 'px', color: state.colors.text, textAlign: editDirection === 'rtl' ? 'right' : 'left' }, characterMessageStyle(msg.speaker))"
                 :dir="editDirection"
                 @input="autoGrow($event)"
                 ref="editArea"
@@ -1550,12 +1568,19 @@ nextTick(() => {
 // Insert Empty Message for Character (from msg actions)
 function insertEmptyMessageForCharacter(speaker, afterIdx) {
   pushUndo();
+  // Inherit direction from the message at afterIdx if it exists, else fallback to layout
+  let inheritDirection = 'ltr';
+  if (typeof afterIdx === 'number' && state.messages[afterIdx] && state.messages[afterIdx].direction) {
+    inheritDirection = state.messages[afterIdx].direction;
+  } else if (state.layout && state.layout.portraitShape === 'RTL') {
+    inheritDirection = 'rtl';
+  }
   const newMsg = {
     speaker,
     content: "",
     media: null,
-    direction: state.layout && state.layout.portraitShape === 'RTL' ? 'rtl' : 'ltr', // fallback to ltr if not set
-    versions: [{ content: "", direction: state.layout && state.layout.portraitShape === 'RTL' ? 'rtl' : 'ltr' }],
+    direction: inheritDirection,
+    versions: [{ content: "", direction: inheritDirection }],
     currentVersionIdx: 0
   };
   state.messages.splice(afterIdx + 1, 0, newMsg);
@@ -2047,7 +2072,24 @@ function characterFontStyle(speaker) {
   if (char.fontColor) style.color = char.fontColor;
   if (char.fontFamily) style.fontFamily = char.fontFamily;
   style.fontSize = state.layout.fontSize + 'px';
-  style.textAlign = 'center'; // <-- Change this line
+  // style.textAlign = 'center'; // Remove forced center
+  return style;
+}
+
+// Helper to get character style for message content
+function characterMessageStyle(speaker) {
+  const char = findChar(speaker);
+  let style = {};
+  if (char && char.role === 'character') {
+    if (char.fontStyle) {
+      if (char.fontStyle.bold) style.fontWeight = 'bold';
+      if (char.fontStyle.italic) style.fontStyle = 'italic';
+      if (char.fontStyle.underline) style.textDecoration = 'underline';
+    }
+    if (char.fontColor) style.color = char.fontColor;
+    if (char.fontFamily) style.fontFamily = char.fontFamily;
+  }
+  style.fontSize = state.layout.fontSize + 'px';
   return style;
 }
 
@@ -2715,7 +2757,7 @@ onMounted(() => {
   position: relative;
   z-index: 2;
   min-width: 300px;
-  max-width: 400px;
+  max-width: 560px;
   height: 100vh;
   transition: width 0.35s;
   display: flex;
@@ -2795,18 +2837,6 @@ onMounted(() => {
   isolation: isolate;
   min-height: 100vh;
   background-color: var(--bg-panel, #212733);
-}
-
-/* Add a semi-transparent overlay for better text readability when bg image is present */
-.main::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 1;
-  pointer-events: none;
-  opacity: v-bind('bgImage ? 1 : 0');
-  transition: opacity 0.3s ease;
 }
 
 /* Ensure content is above the overlay */
@@ -3202,11 +3232,11 @@ onMounted(() => {
   background: transparent !important;
   color: var(--accent, #e75480);
   border: none !important;
-  border-radius: 50%;
-  width: 22px !important;
-  height: 22px !important;
-  min-width: 0 !important;
-  min-height: 0 !important;
+  border-radius: 0;
+  width: auto !important;
+  height: auto !important;
+  min-width: 22px !important;
+  min-height: 22px !important;
   max-width: 22px !important;
   max-height: 22px !important;
   font-size: 1.1em;
@@ -3368,7 +3398,6 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
   transition: box-shadow 0.2s;
   /* left, top, width, height, transform are set inline via :style */
 }
@@ -3439,14 +3468,59 @@ onMounted(() => {
 }
 .resize-handle.corner {
   position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #e75480;
-  border-radius: 50%;
-  z-index: 12;
+  width: 18px;
+  height: 18px;
+  background: transparent;
+  border: none;
+  z-index: 100;
   cursor: pointer;
-  opacity: 0.8;
-  border: 2px solid #fff;
+  opacity: 0.85;
+  pointer-events: auto;
+}
+.resize-handle.corner::after {
+  content: "";
+  display: block;
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 8px;
+  height: 8px;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, #888 2px, transparent 2px, transparent 4px, #888 4px, #888 6px, transparent 6px),
+    linear-gradient(135deg, transparent 7px, #888 7px, #888 9px, transparent 9px);
+}
+.resize-handle.corner.top-left::after {
+  left: 3px;
+  top: 3px;
+  right: auto;
+  bottom: auto;
+  transform: scaleX(-1) scaleY(-1);
+}
+.resize-handle.corner.top-right::after {
+  right: 3px;
+  top: 3px;
+  left: auto;
+  bottom: auto;
+  transform: scaleY(-1);
+}
+.resize-handle.corner.bottom-left::after {
+  left: 3px;
+  bottom: 3px;
+  right: auto;
+  top: auto;
+  transform: scaleX(-1);
+}
+.resize-handle.corner.bottom-right::after {
+  right: 3px;
+  bottom: 3px;
+  left: auto;
+  top: auto;
+}
+.resize-handle.corner:hover {
+  background: #b0b7c3;
+  border-color: #e75480;
+  opacity: 1;
 }
 .resize-handle.corner.top-left { top: -6px; left: -6px; cursor: nwse-resize; }
 .resize-handle.corner.top-right { top: -6px; right: -6px; cursor: nesw-resize; }
