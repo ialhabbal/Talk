@@ -666,6 +666,12 @@
                   :disabled="!canRedo"
                   title="Redo"
                 >↻</button>
+                <!-- Emoji Button -->
+                <button
+                  class="msg-action-btn small-action-btn"
+                  @click="openCustomEmojiPicker(idx)"
+                  title="Open custom emoji picker"
+                >😊</button>
                 <!-- Character Avatars and Generate Buttons (moved here) -->
                 <div class="msg-char-avatars-inline">
                   <span
@@ -837,6 +843,11 @@
       style="display:none"
       @change="onBgImageChange"
     />
+
+    <!-- Emoji Picker Modal -->
+    <div v-if="showEmojiPicker" class="emoji-picker-modal" @click.self="showEmojiPicker = false">
+      <emoji-picker @emoji-click="onEmojiSelect"></emoji-picker>
+    </div>
   </div>
 </template>
 
@@ -846,6 +857,7 @@ import { ColorPicker } from 'vue3-colorpicker';
 import 'vue3-colorpicker/style.css';
 import mammoth from 'mammoth';
 import { Document, Packer, Paragraph, TextRun } from "docx";
+import 'emoji-picker-element';
 
 // Export/Import LLM Preset logic
 const aiPresetImportInput = ref(null);
@@ -1678,7 +1690,11 @@ function exportChatJson() {
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = (state.chatTitle || "chat") + ".json";
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0,10);
+  const timeStr = now.toTimeString().slice(0,8).replace(/:/g, '-');
+  const safeTitle = (state.chatTitle || "chat").replace(/[\\/:*?"<>|]/g, '_');
+  a.download = `${safeTitle}_${dateStr}_${timeStr}.json`;
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {
@@ -1787,12 +1803,12 @@ body {
   position: absolute;
   top: 2px;
   right: 2px;
-  background: #a83333;
+   background: #a83333;
   color: #fff;
   border: none;
   border-radius: 50%;
   width: 22px;
-  height: 22px;
+    height: 22px;
   font-size: 1em;
   cursor: pointer;
   opacity: 0.85;
@@ -2104,7 +2120,11 @@ function exportChatTxt() {
   // Create a temporary link to trigger download
   const a = document.createElement('a');
   a.href = url;
-  a.download = (state.chatTitle || "chat") + ".txt";
+  const now = new Date();
+  const dateStr = now.toISOString().slice(0,10);
+  const timeStr = now.toTimeString().slice(0,8).replace(/:/g, '-');
+  const safeTitle = (state.chatTitle || "chat").replace(/[\\/:*?"<>|]/g, '_');
+  a.download = `${safeTitle}_${dateStr}_${timeStr}.txt`;
   document.body.appendChild(a);
   a.click();
   setTimeout(() => {
@@ -2150,7 +2170,11 @@ function exportChatDocx() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = (state.chatTitle || "chat") + ".docx";
+    const now = new Date();
+    const dateStr = now.toISOString().slice(0,10);
+    const timeStr = now.toTimeString().slice(0,8).replace(/:/g, '-');
+    const safeTitle = (state.chatTitle || "chat").replace(/[\\/:*?"<>|]/g, '_');
+    a.download = `${safeTitle}_${dateStr}_${timeStr}.docx`;
     document.body.appendChild(a);
     a.click();
     setTimeout(() => {
@@ -2228,7 +2252,6 @@ function getAIPresetConfig() {
     streaming: !!aiPreset.streaming,
     contextTemplate: String(aiPreset.contextTemplate || ''),
     instructTemplate: String(aiPreset.instructTemplate || '')
-
   };
 }
 function insertContextTemplate() {
@@ -2724,6 +2747,59 @@ onMounted(() => {
     });
   }
 });
+
+// Open Windows Emoji Panel (Win + .)
+function openWindowsEmojiPanel() {
+  // This will only work on Windows and in Electron/desktop apps, not in browsers
+  // Try to use the execCommand fallback for browsers, but show a tip
+  try {
+    // Focus the active element (should be the textarea or input)
+    if (document.activeElement) {
+      document.activeElement.blur();
+      document.activeElement.focus();
+    }
+    // Try to trigger the emoji panel (Win + .)
+    // This is not possible from browser JS for security reasons, but we can show a tip
+    showToast('Press Win + . (Windows key + period) to open the emoji panel.');
+  } catch (e) {
+    showToast('Press Win + . (Windows key + period) to open the emoji panel.');
+  }
+}
+
+const showEmojiPicker = ref(false);
+const emojiPickerIdx = ref(null);
+
+function onEmojiSelect(event) {
+  const emoji = event.detail.unicode;
+  if (typeof emojiPickerIdx.value === 'number') {
+    // If editing, insert emoji at cursor in textarea
+    if (editIdx.value === emojiPickerIdx.value && editArea.value) {
+      const textarea = editArea.value;
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      const before = editContent.value.slice(0, start);
+      const after = editContent.value.slice(end);
+      editContent.value = before + emoji + after;
+      nextTick(() => {
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = start + emoji.length;
+      });
+    }
+  }
+  showEmojiPicker.value = false;
+  emojiPickerIdx.value = null;
+}
+
+function openCustomEmojiPicker(idx) {
+  showEmojiPicker.value = true;
+  emojiPickerIdx.value = idx;
+  nextTick(() => {
+    // Focus the textarea if editing
+    if (editIdx.value === idx && editArea.value) {
+      editArea.value.focus();
+    }
+  });
+}
 </script>
 
 <style>
@@ -2861,7 +2937,7 @@ onMounted(() => {
 }
 
 .bg-button:hover {
-  background: var(--bg-hover);
+  background: #e75480;
 }
 
 /* Ensure modals and dropdowns are above background */
@@ -3003,6 +3079,7 @@ onMounted(() => {
   word-wrap: break-word;
   overflow-wrap: break-word;
   box-sizing: border-box;
+  isolation: isolate;
 }
 .msg-header {
   font-weight: bold;
@@ -3386,7 +3463,6 @@ onMounted(() => {
   border: 1.5px solid #e75480;
   background: #2a2e38;
 }
-
 /* Detached media box styles */
 .detached-media-box {
   position: fixed;
@@ -3657,5 +3733,28 @@ onMounted(() => {
 .preset-label-white {
   color: #fff !important;
   text-decoration: none !important;
+}
+.emoji-picker-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.emoji-picker-modal .emoji-picker {
+  max-width: 100%;
+  max-height: 100%;
+  background: var(--bg-panel, #212733);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 4px 32px #000a;
+  overflow: auto;
 }
 </style>
