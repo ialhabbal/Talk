@@ -1,0 +1,29 @@
+2025/09/19-13:12:33.437 456c Reusing MANIFEST C:\Users\ialhabbal\AppData\Roaming\Electron\Local Storage\leveldb/MANIFEST-000001
+2025/09/19-13:12:33.439 456c Recovering log #286
+2025/09/19-13:12:33.439 456c Reusing old log C:\Users\ialhabbal\AppData\Roaming\Electron\Local Storage\leveldb/000286.log 
+2025/09/19-15:17:31.409 4528 Level-0 table #289: started
+2025/09/19-15:17:31.422 4528 Level-0 table #289: 4769485 bytes OK
+2025/09/19-15:17:31.424 4528 Delete type=0 #286
+2025/09/19-16:16:45.432 4528 Level-0 table #291: started
+2025/09/19-16:16:45.447 4528 Level-0 table #291: 1503136 bytes OK
+2025/09/19-16:16:45.448 4528 Delete type=0 #288
+2025/09/19-16:19:14.014 4528 Level-0 table #293: started
+2025/09/19-16:19:14.040 4528 Level-0 table #293: 13288443 bytes OK
+2025/09/19-16:19:14.042 4528 Delete type=0 #290
+2025/09/19-16:19:14.045 4528 Compacting 4@0 + 1@1 files
+2025/09/19-16:19:14.078 4528 Generated table #294@0: 3 keys, 13288491 bytes
+2025/09/19-16:19:14.091 4528 Generated table #295@0: 1 keys, 157 bytes
+2025/09/19-16:19:14.091 4528 Compacted 4@0 + 1@1 files => 13288648 bytes
+2025/09/19-16:19:14.092 4528 compacted to: files[ 0 2 2 0 0 0 0 ]
+2025/09/19-16:19:14.092 4528 Delete type=2 #283
+2025/09/19-16:19:14.093 4528 Delete type=2 #285
+2025/09/19-16:19:14.093 4528 Delete type=2 #289
+2025/09/19-16:19:14.093 4528 Delete type=2 #291
+2025/09/19-16:19:14.093 4528 Delete type=2 #293
+2025/09/19-16:19:14.097 4528 Moved #295 to level-2 157 bytes OK: files[ 0 1 3 0 0 0 0 ]
+2025/09/19-16:19:14.097 4528 Compacting 1@1 + 1@2 files
+2025/09/19-16:19:14.130 4528 Generated table #296@1: 10 keys, 13288854 bytes
+2025/09/19-16:19:14.133 4528 Compacted 1@1 + 1@2 files => 13288854 bytes
+2025/09/19-16:19:14.134 4528 compacted to: files[ 0 0 3 0 0 0 0 ]
+2025/09/19-16:19:14.134 4528 Delete type=2 #236
+2025/09/19-16:19:14.134 4528 Delete type=2 #294
