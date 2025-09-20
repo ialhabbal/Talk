@@ -26,12 +26,12 @@ The Program is packed with features, here are some of them (A demo video will fo
 
 Installation:
 -------------
-1- Install Git (so you can clone the repo, otherwise click on the dropdown "<> Code" and download the zip file.)
-2- Install Node.js (LTS).
-3- In the drive/directory where you want to install the program, open a PowerShell window and type: git clone https://github.com/ialhabbal/Talk.git
-4- Still inside the PowerShell, run the following command: npm install, wait until all packages' installation complete.
-5- Exit the PowerShell, go inside the project folder if you are not there already, double-click: build.bat, this will create a "dist" folder in the program folder.
-6- Run the program, double-click on Talk.bat
+1. Install Git (so you can clone the repo, otherwise click on the dropdown "<> Code" and download the zip file.)
+2. Install Node.js (LTS).
+3. In the drive/directory where you want to install the program, open a PowerShell window and type: git clone https://github.com/ialhabbal/Talk.git
+4. Still inside the PowerShell, run the following command: npm install, wait until all packages' installation complete.
+5. Exit the PowerShell, go inside the project folder if you are not there already, double-click: build.bat, this will create a "dist" folder in the program folder.
+6. Run the program, double-click on Talk.bat
 
 Step-by-step basic usage (friendly)
 -----------------------------------
