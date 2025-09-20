@@ -33,6 +33,11 @@ Installation:
 5. Exit the PowerShell, go inside the project folder if you are not there already, double-click: build.bat, this will create a "dist" folder in the program folder.
 6. Run the program, double-click on Talk.bat
 
+## Installation Video
+
+[![Watch the video](https://img.youtube.com/vi/wXSQHGZXUbM/0.jpg)](https://youtu.be/wXSQHGZXUbM)
+
+
 Step-by-step basic usage (friendly)
 -----------------------------------
 IMPORTANT: If you plan to use a Large Language Model (LLM) for AI enabled chat/story writing, then make sure you run Koboldcpp with your preferred LLM model, ensure Koboldcpp is connected to port 5001.
