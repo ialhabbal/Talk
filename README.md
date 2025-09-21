@@ -53,6 +53,10 @@ Installation:
 
 [![Watch the demo](https://img.youtube.com/vi/I1ZMmgkprnU/0.jpg)](https://youtu.be/I1ZMmgkprnU)
 
+## Loading Existing Chat, Navigating Up and Down the Chat, Blur Slider
+
+[![Watch the demo](https://img.youtube.com/vi/ZNyjrx1MMJY/0.jpg)](https://youtu.be/ZNyjrx1MMJY)
+
 
 Step-by-step basic usage (friendly)
 -----------------------------------
