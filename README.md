@@ -57,6 +57,10 @@ Installation:
 
 [![Watch the demo](https://img.youtube.com/vi/ZNyjrx1MMJY/0.jpg)](https://youtu.be/ZNyjrx1MMJY)
 
+## Changing font family and font size
+
+[![Watch the demo](https://img.youtube.com/vi/BmSULBLFCWE/0.jpg)](https://youtu.be/BmSULBLFCWE)
+
 
 Step-by-step basic usage (friendly)
 -----------------------------------
