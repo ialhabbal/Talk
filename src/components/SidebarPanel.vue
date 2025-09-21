@@ -1,17 +1,27 @@
 <template>
-  <div v-if="sidebarOpen" class="sidebar">
+  <div v-if="sidebarOpen" class="sidebar" :style="{ width: sidebarWidth + 'px' }">
     <div class="collapse-btn" @click="$emit('update:sidebarOpen', false)" title="Hide controls">⏴</div>
     <!-- 3. Theme selector UI -->
-    <div class="section" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+  <div class="section theme-section" style="display: flex; justify-content: center; align-items: center; gap: 10px;">
       <label style="margin-bottom: 0;">Theme:</label>
       <select
         :value="selectedThemeIdx"
         @change="onThemeChange"
+        @click.stop
+        @mousedown.stop
         style="min-width: 120px;"
       >
         <option v-for="(theme, idx) in themes" :key="theme.name" :value="idx">{{ theme.name }}</option>
       </select>
     </div>
+    <!-- Resizer handle: vertical bar at the right edge of the sidebar -->
+    <div
+      class="sidebar-resizer"
+      role="separator"
+      aria-orientation="vertical"
+      aria-label="Resize sidebar"
+      @pointerdown.prevent="startResize"
+    ></div>
     <div class="button-row center-row" style="margin-top: 8px;">
       <button class="export-btn bg-btn-blue blue-text" @click="triggerBgFileInput">Set Chat Background</button>
     </div>
@@ -1013,6 +1023,50 @@ function onImportCharacterCard(event) {
 function findChar(name) {
   return props.state.characters.find(c => c.name === name);
 }
+
+// --- Resizer logic ---
+const sidebarWidth = ref(Number(localStorage.getItem('sidebarWidth')) || 320)
+const SIDEBAR_MIN = 220
+let _startX = 0
+let _startWidth = 0
+
+function clampWidth(w) {
+  // Only enforce minimum width to remove any artificial right-side limit
+  return Math.max(SIDEBAR_MIN, Math.round(w))
+}
+
+function startResize(e) {
+  // Pointer events unify mouse/touch/pen
+  const clientX = e.clientX || (e.touches && e.touches[0] && e.touches[0].clientX) || 0
+  _startX = clientX
+  _startWidth = sidebarWidth.value || 320
+  document.body.classList.add('resizing-in-progress')
+  window.addEventListener('pointermove', onPointerMove)
+  window.addEventListener('pointerup', stopResize)
+  // prevent text selection while dragging
+}
+
+function onPointerMove(e) {
+  const dx = (e.clientX || 0) - _startX
+  sidebarWidth.value = clampWidth(_startWidth + dx)
+}
+
+function stopResize() {
+  window.removeEventListener('pointermove', onPointerMove)
+  window.removeEventListener('pointerup', stopResize)
+  document.body.classList.remove('resizing-in-progress')
+  try { localStorage.setItem('sidebarWidth', String(sidebarWidth.value)) } catch (e) { /* ignore */ }
+}
+
+onMounted(() => {
+  // clamp loaded width in case prefs changed
+  sidebarWidth.value = clampWidth(sidebarWidth.value)
+})
+
+onBeforeUnmount(() => {
+  // ensure listeners removed
+  stopResize()
+})
 </script>
 
 /*

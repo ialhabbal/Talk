@@ -40,7 +40,8 @@
   flex: 0 0 auto;
   width: auto;
   min-width: 220px;
-  max-width: 520px;
+  /* allow JS to control the width without being clamped by CSS; removing max-width lets the sidebar expand freely */
+  max-width: none;
   height: 100vh;
   overflow-y: auto; /* independent vertical scroll for sidebar */
   box-sizing: border-box;
@@ -56,9 +57,41 @@
    remain in effect. Restoring default behavior prevents unintended full-width expansion. */
 .sidebar {
   box-sizing: border-box;
+  position: relative; /* required for absolute-positioned resizer handle */
+}
+
+/* Resizer handle between sidebar and main content */
+.sidebar-resizer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 10px; /* wide enough for touch */
+  height: 100%;
+  cursor: ew-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 30;
+}
+.sidebar-resizer::before {
+  content: '';
+  width: 2px;
+  height: 36px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+}
+.sidebar-resizer:hover::before { background: rgba(231,84,128,0.9); }
+
+/* While dragging we add a class to change pointer events on main area (applied via JS) */
+.resizing-in-progress {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 .collapse-btn, .expand-btn {
-  position: absolute;
+  /* Make the toggle sticky so it remains visible while the sidebar scrolls */
+  position: sticky;
   top: 10px;
   left: 10px; /* keep toggle persistently on the left side */
   right: auto;
@@ -68,8 +101,17 @@
   padding: 2px 8px;
   cursor: pointer;
   font-size: 1.3em;
-  z-index: 10;
+  z-index: 60; /* higher so it stays above other sidebar content */
   box-shadow: 1px 2px 6px #0004;
+  /* Ensure the button only wraps its own content and doesn't expand to full width */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  min-width: 0;
+  box-sizing: border-box;
+  align-self: flex-start;
+  max-width: max-content;
 }
 .expand-btn {
   background: #212733;
@@ -165,6 +207,13 @@
 
 .section {
   margin-bottom: 20px;
+}
+
+/* Ensure the theme selector doesn't overlap the sidebar collapse control */
+.theme-section {
+  position: relative; /* create stacking context */
+  z-index: 15; /* higher than .collapse-btn (z-index:10) so the select sits above the button */
+  padding-left: 12px; /* reduce padding now that the collapse button is compact */
 }
 .button-row {
   display: flex;
@@ -450,8 +499,11 @@
 .msg-actions-primary { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .msg-actions-secondary { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 /* Hide secondary controls until hover for declutter */
-.secondary { display: none; }
-.msg-row:hover .secondary { display: flex; }
+.secondary { display: flex; }
+/* Previously the secondary actions were only shown on hover. We make them
+  always visible so the bottom row of each message doesn't collapse when
+  the user moves the mouse away. Keep layout as flex to preserve wrapping. */
+/* Remove hover rule to avoid hiding actions on mouseout */
 
 /* Small popover menu styling */
 .btn-with-menu { position: relative; }
@@ -466,7 +518,25 @@
   border-radius: 6px;
   padding: 6px;
   box-shadow: 0 6px 24px #000a;
-  z-index: 20;
+  z-index: 500; /* raised so popovers (Guide, menus) render above messages and overlays */
+  /* prevent clipping inside containers with overflow by using a transform for its stacking context */
+  transform: translateZ(0);
+}
+
+/* Ensure message-local menu triggers and their popovers sit above adjacent messages
+   by giving the trigger a local stacking context. Prefer opening upward to avoid
+   being overlapped or clipped by the next message. Exclude font-popover which
+   uses different placement logic. */
+.btn-with-menu {
+  position: relative; /* create stacking context for the popover */
+  z-index: 2000; /* above normal message content */
+}
+.btn-with-menu > .menu-popover:not(.font-popover) {
+  /* open upward where possible so the dropdown appears above the current message
+     instead of being covered by the next message below it. */
+  top: auto !important;
+  bottom: calc(100% + 6px) !important;
+  left: 0;
 }
 .menu-popover.font-popover.right-of-btn {
   top: 0;           /* align with trigger vertically */
@@ -717,6 +787,24 @@
   padding: 4px 8px;
   min-width: 180px;
 }
+
+.search-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.search-clear {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: transparent;
+  color: #cfcfcf;
+  cursor: pointer;
+  font-size: 0.9em;
+  padding: 2px;
+}
+.search-clear:hover { color: #fff; }
 .right-top-toolbar {
   position: fixed; /* small gap from the top edge */
   top: 6px;

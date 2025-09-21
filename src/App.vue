@@ -63,7 +63,11 @@
           </div>
           <div class="toolbar-right">
             <!-- search controls placed immediately to the left of the arrows -->
-            <input class="search-input toolbar-search" v-model="searchQuery" placeholder="Search text..." @input="applySearchFilter" @keydown.enter.prevent="nextHit" @keydown.shift.enter.prevent="prevHit" />
+            <div class="search-wrapper">
+              <input class="search-input toolbar-search" ref="toolbarSearchInput" v-model="searchQuery" placeholder="Search text..." @keydown.enter.prevent="nextHit" @keydown.shift.enter.prevent="prevHit" />
+              <button class="search-clear" v-if="searchQuery" @click.prevent="clearSearch" title="Clear search">✖</button>
+            </div>
+            <button class="toolbar-btn search-label" @click="applySearchFilter" title="Search">Search</button>
             <span class="match-counter">{{ searchIndex.length ? (searchPos+1) + '/' + searchIndex.length : '0/0' }}</span>
             <button class="toolbar-btn prev-match" @click="prevHit" title="Previous match">◀</button>
             <button class="toolbar-btn next-match" @click="nextHit" title="Next match">▶</button>
@@ -672,7 +676,11 @@
 
     <!-- In-app search (top-right) -->
     <div class="search-box">
-      <input class="search-input" v-model="searchQuery" placeholder="Search text..." @input="applySearchFilter" @keydown.enter.prevent="nextHit" @keydown.shift.enter.prevent="prevHit" />
+      <div class="search-wrapper">
+        <input class="search-input" v-model="searchQuery" placeholder="Search text..." @keydown.enter.prevent="nextHit" @keydown.shift.enter.prevent="prevHit" />
+        <button class="search-clear" v-if="searchQuery" @click.prevent="clearSearch" title="Clear search">✖</button>
+      </div>
+      <button class="small-action-btn" @click="applySearchFilter" title="Search">Search</button>
       <button class="small-action-btn" @click="prevHit" title="Previous match">◀</button>
       <button class="small-action-btn" @click="nextHit" title="Next match">▶</button>
       <span style="color:#b0b7c3; font-size:0.9em; min-width:48px; text-align:center;">{{ searchIndex.length ? (searchPos+1) + '/' + searchIndex.length : '0/0' }}</span>
@@ -1062,6 +1070,8 @@ const isBackendOnline = ref(true);
 const offlineMode = ref(localStorage.getItem('offlineMode') === '1');
 const hideConnBanner = ref(false);
 
+// ...existing code...
+
 function setOfflineMode(v) {
   offlineMode.value = !!v;
   localStorage.setItem('offlineMode', offlineMode.value ? '1' : '0');
@@ -1087,19 +1097,8 @@ function clone(obj) {
   return JSON.parse(JSON.stringify(obj));
 }
 
-// Collapse sidebar on outside click
+// Note: collapsing the sidebar on outside click was removed per user request.
 const sidebarArea = ref(null);
-function onGlobalClickCollapseSidebar(e) {
-  try {
-    const target = e.target;
-    // Prefer ref (stable across transitions), fallback to query
-    const sidebarEl = (sidebarArea.value && sidebarArea.value.querySelector && sidebarArea.value.querySelector('.sidebar')) || document.querySelector('.sidebar');
-    const withinSidebar = sidebarEl && sidebarEl.contains(target);
-    if (sidebarOpen.value && sidebarEl && !withinSidebar) {
-      sidebarOpen.value = false;
-    }
-  } catch {}
-}
 
 // Default layout and color values
 const defaultLayout = {
@@ -1135,12 +1134,22 @@ const estimatedRowHeight = 120; // retained for reference
 // In-app search state and filter
 const showHelp = ref(false);
 const searchQuery = ref('');
+const toolbarSearchInput = ref(null)
+
+function clearSearch() {
+  searchQuery.value = ''
+  try { toolbarSearchInput.value && toolbarSearchInput.value.focus() } catch (e) {}
+}
 // default to text search only
 const searchIndex = ref([]); // array of { idx, ranges: [ [start,end], ... ] }
 const searchPos = ref(0);
 const searchBusy = ref(false);
+// whether the user explicitly requested a search (clicking Search)
+const searchRequested = ref(false);
 const filteredMessages = ref(state.messages); // deprecated for full-list search
 function applySearchFilter() {
+  // Mark that this search was explicitly requested by the user so we can auto-jump
+  searchRequested.value = true;
   rebuildFilteredMessagesDebounced();
 }
 // Keep filtered list in sync with loaded chats when no search is active
@@ -1198,10 +1207,13 @@ function buildSearchIndex() {
       setTimeout(processBatch, 0);
     } else {
       searchBusy.value = false;
-      // Auto-jump to first match if present
       if (searchIndex.value.length) {
         searchPos.value = 0;
-        nextTick(scrollToSearchPos);
+        // Only auto-jump if it was an explicit user-initiated Search
+        if (searchRequested.value) {
+          searchRequested.value = false;
+          nextTick(scrollToSearchPos);
+        }
       }
     }
   }
@@ -3819,12 +3831,10 @@ onMounted(() => {
   // Global click-away to close open menus
   // Capture phase to ensure we see the click before it gets stopped in child components
   window.addEventListener('click', handleGlobalClick, true);
-  window.addEventListener('click', onGlobalClickCollapseSidebar, true);
 });
 
 onBeforeUnmount(() => {
   window.removeEventListener('click', handleGlobalClick, true);
-  window.removeEventListener('click', onGlobalClickCollapseSidebar, true);
 });
 
 // Open Windows Emoji Panel (Win + .)
