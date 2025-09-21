@@ -45,6 +45,10 @@ Installation:
 
 [![Watch the video](https://img.youtube.com/vi/LRwRQJVrRH0/0.jpg)](https://youtu.be/LRwRQJVrRH0)
 
+## Starting Koboldcpp, loading an LLM and starting AI Chat
+
+[![Watch the demo](https://img.youtube.com/vi/CTbHf-bGemw/0.jpg)](https://youtu.be/CTbHf-bGemw)
+
 
 Step-by-step basic usage (friendly)
 -----------------------------------
