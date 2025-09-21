@@ -65,6 +65,10 @@ Installation:
 
 [![Watch the demo](https://img.youtube.com/vi/fy3858gSMzE/0.jpg)](https://youtu.be/fy3858gSMzE)
 
+## Adding a Video with Audio to Chats
+
+[![Watch the demo](https://img.youtube.com/vi/WGxyGKf21FI/0.jpg)](https://youtu.be/WGxyGKf21FI)
+
 
 Step-by-step basic usage (friendly)
 -----------------------------------
