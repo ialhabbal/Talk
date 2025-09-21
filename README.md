@@ -49,6 +49,10 @@ Installation:
 
 [![Watch the demo](https://img.youtube.com/vi/CTbHf-bGemw/0.jpg)](https://youtu.be/CTbHf-bGemw)
 
+## A Look at the LLM Advanced Settings
+
+[![Watch the demo](https://img.youtube.com/vi/I1ZMmgkprnU/0.jpg)](https://youtu.be/I1ZMmgkprnU)
+
 
 Step-by-step basic usage (friendly)
 -----------------------------------
