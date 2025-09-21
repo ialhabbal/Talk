@@ -39,7 +39,7 @@ Installation:
 
 ## Creating User, Characters, formatting messages, media attachment
 
-[![Watch the video](https://img.youtu.be/vi/LRwRQJVrRH0/0.jpg)](https://youtu.be/LRwRQJVrRH0)
+[![Watch the video](https://img.youtube.com/vi/LRwRQJVrRH0/0.jpg)](https://youtu.be/LRwRQJVrRH0)
 
 
 Step-by-step basic usage (friendly)
