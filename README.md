@@ -37,6 +37,10 @@ Installation:
 
 [![Watch the video](https://img.youtube.com/vi/wXSQHGZXUbM/0.jpg)](https://youtu.be/wXSQHGZXUbM)
 
+##  Interface, Themes, and Background Changing
+
+[![Watch the demo](https://img.youtube.com/vi/LdpGbc4rZFM/0.jpg)](https://youtu.be/LdpGbc4rZFM)
+
 ## Creating User, Characters, formatting messages, media attachment
 
 [![Watch the video](https://img.youtube.com/vi/LRwRQJVrRH0/0.jpg)](https://youtu.be/LRwRQJVrRH0)
