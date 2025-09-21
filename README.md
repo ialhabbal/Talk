@@ -61,6 +61,10 @@ Installation:
 
 [![Watch the demo](https://img.youtube.com/vi/BmSULBLFCWE/0.jpg)](https://youtu.be/BmSULBLFCWE)
 
+## Fixes and Tweaks
+
+[![Watch the demo](https://img.youtube.com/vi/fy3858gSMzE/0.jpg)](https://youtu.be/fy3858gSMzE)
+
 
 Step-by-step basic usage (friendly)
 -----------------------------------
