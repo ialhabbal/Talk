@@ -69,6 +69,10 @@ Installation:
 
 [![Watch the demo](https://img.youtube.com/vi/WGxyGKf21FI/0.jpg)](https://youtu.be/WGxyGKf21FI)
 
+## How to Update Talk
+
+[![Watch the demo](https://img.youtube.com/vi/Vn35LZZ9tf0/0.jpg)](https://youtu.be/Vn35LZZ9tf0)
+
 
 Step-by-step basic usage (friendly)
 -----------------------------------
