@@ -73,6 +73,10 @@ Installation:
 
 [![Watch the demo](https://img.youtube.com/vi/Vn35LZZ9tf0/0.jpg)](https://youtu.be/Vn35LZZ9tf0)
 
+## Running "Talk" with AI on a Very Old System
+
+[![Watch the demo](https://img.youtube.com/vi/lz0PhOnhSK8/0.jpg)](https://youtu.be/lz0PhOnhSK8)
+
 
 Step-by-step basic usage (friendly)
 -----------------------------------
